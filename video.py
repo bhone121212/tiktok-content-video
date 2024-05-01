@@ -19,9 +19,9 @@ from datetime import datetime
 database_url = "postgresql://fbs:yah7WUy1Oi8G@172.32.253.129:5432/fbs"
 engine = create_engine(database_url)
 
-ms_token = "AySjOsUhnRUCms09JiJ47wIqlss6EXPeWjdz2otVANAWFCf52sAiJssicwKW4hFt3gI6XSYVe-bdh73KNszJJMYQBT-QOq_7TFMgWFnJM6inN6ATgMQ5"
-ms_token2 = "tg-gfxTNY1vFk8aX074Bx_fBpvBnQ3n0tiXc1CQsYIVVc0vJkVOeRTUrM62hlDcO_87fLtrP7QSw_8UXofYFoQyeiVB-bhFwrvI4kYhygig5KN1wk-zE3Oisnw3xOxCjUBJ3XiVEPbHKW4i3"
-ms_token1 = "6ZgMsdFEjgHnPcgKASehIfrCLwYKTVDvQJb-x4g8wo1EW8MY4F27aamjmYrYmsacZowsWEwqFxb-Z92K-jBCqM1rCyK8rr96227LVErJD4fLurIAt8tCUy8dY-_pFAa40aqF17ajISbjZOx7"# get your own ms_token from your cookies on tiktok.com
+ms_token = "ZzFUUrA00TSsLWbERKELlxbIPCGej2ihoBA_WJoz6F0gcr493Tp9T8KYMQrFgXiJ4N0k91ILC_iqlcK0ycsrxo4jJV3He8TbOD2NX5pZxirZ_ZNklL4A3OwSv4qV"
+ms_token2 = "Tp91uG7q90fIMy5XUz3QwePFlV7VSuVDgcGLYnGghzHfBLSGeeidZsNDxZOL7N1mmovO5kqxoZI3AGiH_Dmd9Mg1-4XCLxlXM6OQPEg7iz7-rcRa6ARgfkNGbA5T"
+ms_token1 = "HrJr2bxMVGwLmSxp7fvH-ZOsaJRGg0R9_Sa931ykhuBzQJHBPQDAy15ONGuFwZQDwpmnwOMBSTQlSlEOeDjyMEHQumPELa9x7Y7PC0ddVdK0lfu3mnnfj8K-GUiw"# get your own ms_token from your cookies on tiktok.com
 
 class UserInfo:
     o_data = []
@@ -105,13 +105,43 @@ async def insert_video():
                                         await asyncio.sleep(3)
                                         app.db.session.commit()
                                         print("video data source is added successful, video id : {}".format(video_id))
+
+                                        #content_id collect from table tiktokvideo info
+                                        content = app.db.session.query(app.TikTokVideosInfo.id).filter(app.TikTokVideosInfo.video_id == video_id).all()
+
+                                        # Extracting the id values from the result
+                                        ids = [row.id for row in content]                       
+
+                                        # Reflect the  table from the database
+                                        content_table = Table('all_content', metadata, autoload_with=engine)
+
+                                        # Access the columns of the "content" table
+                                        columns = content_table.columns.keys()
+
+                                        # Print the column names
+                                        content_column = columns[1]
+                                        network_column = columns[2]
+                                        # print("content_column {},network_column {}".format(ids,5))
+
+                                        # Define the values to insert
+                                        values_to_insert = [
+                                            {content_column: content_id, network_column: 5} for content_id in ids
+                                        ]
+
+                                        # Create an insert statement
+                                        insert_allcontent = content_table.insert().values(values_to_insert)
+
+                                        # Execute the insert statement
+                                        app.db.session.execute(insert_allcontent)
+                                        print("Added content id values : {} for network id 5".format(ids))
+
                                     except Exception as e:
                                         print(f"Error updating data: {e}")
                                         app.db.session.rollback()
 
                                 else:
-                                    update_user_videos = update(app.TikTokVideosInfo).where(result_video.video_id  == video_id).values(
-                                        #source_id = source_id,
+                                    update_user_videos = update(app.TikTokVideosInfo).where(app.TikTokVideosInfo.video_id  == video_id).values(
+                                        source_id = source_id,
                                         video_createtime = datetime.utcfromtimestamp(video_createtime),
                                         video_description = video_description,
                                         video_url = video_url,                          
@@ -141,11 +171,11 @@ if __name__ == "__main__":
         session = Session()
                         
         all_users = session.query(users).with_entities(app.TikTokSources.source_name).all()
-        rand_source = random.sample(all_users,3)
+        rand_source = random.sample(all_users,7)
         sources = [''.join(user) for user in rand_source] 
         print(sources)
         
-        # sources = ["elevenmedia"] #yangonmediagroup #1108 #elevenmedia
+        #sources = ["elevenmedia"] #yangonmediagroup #1108 #elevenmedia
 
         #asyncio.get_running_loop()
 
