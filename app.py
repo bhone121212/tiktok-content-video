@@ -8,7 +8,7 @@ from sqlalchemy.dialects.postgresql import BIGINT
 
 app = Flask(__name__)
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:admin@localhost:5432/dbtiktok"
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://fbs:yah7WUy1Oi8G@172.32.253.129:5432/fbs" #yah7WUy1Oi8G
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://fbs:yah7WUy1Oi8G@192.168.11.202:5432/fbs" #yah7WUy1Oi8G
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)

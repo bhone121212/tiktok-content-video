@@ -18,7 +18,7 @@ from tkinter import simpledialog
 #    "ms_token", None
 #)  # set your own ms_token, think it might need to have visited a profile
 #database_url = "postgresql://postgres:admin@localhost:5432/dbtiktok"
-database_url = "postgresql://fbs:yah7WUy1Oi8G@172.32.253.129:5432/fbs"
+database_url = "postgresql://fbs:yah7WUy1Oi8G@192.168.11.202:5432/fbs"
 engine = create_engine(database_url)
 
 ms_token = "ZzFUUrA00TSsLWbERKELlxbIPCGej2ihoBA_WJoz6F0gcr493Tp9T8KYMQrFgXiJ4N0k91ILC_iqlcK0ycsrxo4jJV3He8TbOD2NX5pZxirZ_ZNklL4A3OwSv4qV"
