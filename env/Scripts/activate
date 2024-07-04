@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="D:\A-ds\development\dev-tiktok-hashtag\env"
+VIRTUAL_ENV="D:\A-ds\development\tiktok-video-content\env"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

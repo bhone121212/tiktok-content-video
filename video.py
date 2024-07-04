@@ -11,6 +11,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import update
 import app
 from datetime import datetime
+import tkinter as tk
+from tkinter import simpledialog
 
 #ms_token = os.environ.get(
 #    "ms_token", None
@@ -49,11 +51,11 @@ class UserInfo:
                     print(vcounts)
 
                     ####users videos collect#######
-                    async for video in user.videos(count = 30):  
+                    async for video in user.videos(count = vcounts):  
                     #print(video.as_dict)              
                         user_videos.append(video.as_dict)                    
                     #### collect users data convert json format #######
-                    v_data = json.dumps(user_videos,indent=4)
+                    v_data = json.dumps(user_videos,indent=4) 
                     UserInfo.vo_data = json.loads(v_data)
 
                     await insert_video()          
@@ -174,11 +176,10 @@ if __name__ == "__main__":
         rand_source = random.sample(all_users,7)
         sources = [''.join(user) for user in rand_source] 
         print(sources)
+         
+        source_name = input("Enter source name : ")
+        sources = [source_name] #yangonmediagroup #1108 #elevenmedia sayargyi7635 xinhuamyanmar hkwanntout mtnewstoday npnews3 cnimyanmar09 shwemm143 97media_myanmar dvb.burmese people.media1
         
-        #sources = ["elevenmedia"] #yangonmediagroup #1108 #elevenmedia
-
-        #asyncio.get_running_loop()
-
         loop = asyncio.get_event_loop()
         loop.run_until_complete((UserInfo.user_profile_data(sources)))
 

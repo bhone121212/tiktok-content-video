@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=D:\A-ds\development\dev-tiktok-hashtag\env
+set VIRTUAL_ENV=D:\A-ds\development\tiktok-video-content\env
 
 if not defined PROMPT set PROMPT=$P$G
 

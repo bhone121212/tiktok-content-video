@@ -5,6 +5,6 @@ requests>=2.31.0,<3.0
 playwright>=1.36.0,<2.0
 psycopg2-binary==2.9.9
 SQLAlchemy==2.0.27
-TikTokApi==6.2.1
+TikTokApi==6.1.0
 
 
