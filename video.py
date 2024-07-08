@@ -177,8 +177,8 @@ if __name__ == "__main__":
         sources = [''.join(user) for user in rand_source] 
         print(sources)
          
-        source_name = input("Enter source name : ")
-        sources = [source_name] #yangonmediagroup #1108 #elevenmedia sayargyi7635 xinhuamyanmar hkwanntout mtnewstoday npnews3 cnimyanmar09 shwemm143 97media_myanmar dvb.burmese people.media1
+        #source_name = input("Enter source name : ")
+        #sources = [source_name] #yangonmediagroup #1108 #elevenmedia sayargyi7635 xinhuamyanmar hkwanntout mtnewstoday npnews3 cnimyanmar09 shwemm143 97media_myanmar dvb.burmese people.media1
         
         loop = asyncio.get_event_loop()
         loop.run_until_complete((UserInfo.user_profile_data(sources)))
