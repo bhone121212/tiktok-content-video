@@ -51,7 +51,7 @@ class UserInfo:
                     print(vcounts)
 
                     ####users videos collect#######
-                    async for video in user.videos(count = vcounts):  
+                    async for video in user.videos(count = 50):  
                     #print(video.as_dict)              
                         user_videos.append(video.as_dict)                    
                     #### collect users data convert json format #######
