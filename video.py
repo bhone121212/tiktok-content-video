@@ -11,8 +11,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import update
 import app
 from datetime import datetime
-import tkinter as tk
-from tkinter import simpledialog
 
 #ms_token = os.environ.get(
 #    "ms_token", None
