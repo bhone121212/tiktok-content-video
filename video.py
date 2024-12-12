@@ -46,9 +46,13 @@ class UserInfo:
                     sleep_after=5,
                     headless=False,
                 )
-                # source_name = input("Enter source name : ")
-                # sources = [source_name]
+                
+                ### for database user
                 user = api.user(UserInfo.source)
+                ### for specific user
+                # source_name = input("Enter source name : ")
+                # user = api.user(source_name)
+
                 # print(user)
 
                 user_data = await user.info()
@@ -59,17 +63,21 @@ class UserInfo:
                 heartCount = user_data["userInfo"]["stats"].get("heartCount")
                 post_count = user_data["userInfo"]["stats"].get("videoCount")
                 print(f"User {UserInfo.source} has follower count {followerCount},following count {followingCount}, friend count {friendCount}, heart count {heartCount} ,post count {post_count}.")
+                ### for specific user
+                # print(f"User {source_name} has follower count {followerCount},following count {followingCount}, friend count {friendCount}, heart count {heartCount} ,post count {post_count}.")
 
                 user_videos = []
 
                 r_data = json.dumps(user_data, indent=4)
                 UserInfo.o_data = json.loads(r_data)
 
-                vcounts = UserInfo.o_data["userInfo"]["stats"].get("videoCount")
+                # vcounts = UserInfo.o_data["userInfo"]["stats"].get("videoCount")
                 # print(vcounts)
 
                 ####users videos collect#######
                 async for video in user.videos(count=30):
+                #### for specific user   
+                # async for video in user.videos(count=post_count):
                     # print(video.as_dict)
                     user_videos.append(video.as_dict)
                 #### collect users data convert json format #######
@@ -87,11 +95,15 @@ async def insert_video():
             ###data collects from user link
             video_id = select_data["id"]
             source_id = UserInfo.o_data["userInfo"]["user"]["id"]
+            # source_id = source_name["userInfo"]["user"]["id"]
             video_createtime = select_data["createTime"]
             video_description = str(select_data["desc"])
             video_url = "https://www.tiktok.com/@{}/video/{}".format(
                 UserInfo.source, select_data["id"]
             )
+            # video_url = "https://www.tiktok.com/@{}/video/{}".format(
+            #     source_name, select_data["id"]
+            # )
             video_author = select_data["music"]["authorName"]
             video_duration = select_data["music"]["duration"]
             video_music_title = select_data["music"]["title"]
