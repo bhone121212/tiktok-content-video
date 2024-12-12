@@ -32,6 +32,7 @@ class UserInfo:
     o_data = []
     vo_data = []
     source = []
+    source_name = ""
 
     async def user_profile_data(all_users):
         async with TikTokApi() as api:
@@ -50,8 +51,8 @@ class UserInfo:
                 ### for database user
                 user = api.user(UserInfo.source)
                 ### for specific user
-                # source_name = input("Enter source name : ")
-                # user = api.user(source_name)
+                # UserInfo.source_name = input("Enter source name : ")
+                # user = api.user(UserInfo.source_name)
 
                 # print(user)
 
@@ -64,7 +65,7 @@ class UserInfo:
                 post_count = user_data["userInfo"]["stats"].get("videoCount")
                 print(f"User {UserInfo.source} has follower count {followerCount},following count {followingCount}, friend count {friendCount}, heart count {heartCount} ,post count {post_count}.")
                 ### for specific user
-                # print(f"User {source_name} has follower count {followerCount},following count {followingCount}, friend count {friendCount}, heart count {heartCount} ,post count {post_count}.")
+                # print(f"User {UserInfo.source_name} has follower count {followerCount}, following count {followingCount}, friend count {friendCount}, heart count {heartCount}, post count {post_count}.")
 
                 user_videos = []
 
@@ -95,14 +96,14 @@ async def insert_video():
             ###data collects from user link
             video_id = select_data["id"]
             source_id = UserInfo.o_data["userInfo"]["user"]["id"]
-            # source_id = source_name["userInfo"]["user"]["id"]
+            # source_id = UserInfo.source_name["userInfo"]["user"]["id"]
             video_createtime = select_data["createTime"]
             video_description = str(select_data["desc"])
             video_url = "https://www.tiktok.com/@{}/video/{}".format(
                 UserInfo.source, select_data["id"]
             )
             # video_url = "https://www.tiktok.com/@{}/video/{}".format(
-            #     source_name, select_data["id"]
+            #     UserInfo.source_name, select_data["id"]
             # )
             video_author = select_data["music"]["authorName"]
             video_duration = select_data["music"]["duration"]
@@ -215,8 +216,8 @@ async def insert_video():
                     await asyncio.sleep(3)
                     app.db.session.commit()
                     print(
-                        "video data source is updated successful, video id : {}".format(
-                            video_id
+                        "video data source is updated successful, video id : {},comment : {}, collect : {}, play : {}, share : {}".format(
+                            video_id,video_commentcount,video_collectcount,video_playcount,video_sharecount
                         )
                     )
                 except Exception as e:
