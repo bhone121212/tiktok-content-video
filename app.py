@@ -53,7 +53,7 @@ class TikTokVideosInfo(db.Model):
     s_id = db.Column(db.Integer)
     video_id = db.Column(BIGINT)
     source_id = db.Column(BIGINT)
-    video_createtime = db.Column(TIMESTAMP(timezone=False))
+    video_createtime = db.Column(TIMESTAMP(timezone=True))
     video_description = db.Column(db.String())
     video_url = db.Column(db.String())
 
@@ -75,7 +75,7 @@ class TiktokCommentsInfo(db.Model):
     comment_id = db.Column(BIGINT)
     video_id = db.Column(BIGINT)
     # video_url = db.Column(db.String())
-    comment_time = db.Column(TIMESTAMP(timezone=False))
+    comment_time = db.Column(TIMESTAMP(timezone=True))
     comment_text = db.Column(db.String())
     comment_diggcount = db.Column(db.Integer)
     comment_replycount = db.Column(db.Integer)    

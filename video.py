@@ -12,173 +12,222 @@ from sqlalchemy import update
 import app
 from datetime import datetime
 
-#ms_token = os.environ.get(
+# ms_token = os.environ.get(
 #    "ms_token", None
-#)  # set your own ms_token, think it might need to have visited a profile
-#database_url = "postgresql://postgres:admin@localhost:5432/dbtiktok"
+# )  # set your own ms_token, think it might need to have visited a profile
+# database_url = "postgresql://postgres:admin@localhost:5432/dbtiktok"
 database_url = "postgresql://fbs:yah7WUy1Oi8G@192.168.11.202:5432/fbs"
 engine = create_engine(database_url)
 
-ms_token = "ZzFUUrA00TSsLWbERKELlxbIPCGej2ihoBA_WJoz6F0gcr493Tp9T8KYMQrFgXiJ4N0k91ILC_iqlcK0ycsrxo4jJV3He8TbOD2NX5pZxirZ_ZNklL4A3OwSv4qV"
-ms_token2 = "Tp91uG7q90fIMy5XUz3QwePFlV7VSuVDgcGLYnGghzHfBLSGeeidZsNDxZOL7N1mmovO5kqxoZI3AGiH_Dmd9Mg1-4XCLxlXM6OQPEg7iz7-rcRa6ARgfkNGbA5T"
-ms_token1 = "HrJr2bxMVGwLmSxp7fvH-ZOsaJRGg0R9_Sa931ykhuBzQJHBPQDAy15ONGuFwZQDwpmnwOMBSTQlSlEOeDjyMEHQumPELa9x7Y7PC0ddVdK0lfu3mnnfj8K-GUiw"# get your own ms_token from your cookies on tiktok.com
+# get your own ms_token from your cookies on tiktok.com
+# ms_token = "-iAlEuHbfFrb_4zcxo-XXHUEcAN7T0C8ru69KglJCZPDJMI2vQ3eeehTZ2AlkFwIayJoYFqKpCjDrbC4Qs0nj2TvzUg7ErgIHyzsRtbFZCcuV6uaRS7e0zVJLg9U8JJ80Xn6lrpO6IiuH8w-0fIRggs="
+# ms_token2 = "PVppEY-qxjY94JUwVn3u9yzXa2cT7Clr3tnojbcmojFVwpF3Ok5YEU7btvPtDPuo66G-93-6pwU0zAJIm2_Or7n1VbbE4wqCl-OaQ1NRSVBzR_SzTrB6z3uNK6DmtqJ7Y5_KzPiVvpe81V2wuPc7VRQ="
+# ms_token1 = "MmrwOPItMMBAC0fV0fcH7x4DUGfdMqEBUfhxSHE46dhe_Vj-0_hO-NR99pY6aQpu7AEXuHEFc54T8FgFSx7M6v77C-hlDiF19f1kAykF8YcJFwfutZL6WkkZY65ijWD-69AcfTlrCWdMjph1VEefSO4="
+
+ms_token = os.environ.get(
+    "_csgYPYQLIRVbllarU0NFaEzFBLkg8vBxHRu-0NYyQD8Kcl66CDWa9LIc7uE83O1oAIT7nHExABopKP--09jhxxlWDBGWpxsbOmBGQSUa7FPsyWpsaZWaVD98WBlEYi4J74-AJmhx1i6LkTsyT0zbIs=", None
+)
 
 class UserInfo:
     o_data = []
     vo_data = []
     source = []
-    async def user_profile_data(all_users):   
-        async with TikTokApi() as api:      
-                sources = [''.join(user) for user in all_users] 
-                for source in sources:
-                    UserInfo.source = source
-                    print(source)                
-                    #u = 'rfaburmese'
-                    await api.create_sessions(ms_tokens=[ms_token,ms_token1,ms_token2], num_sessions=1, sleep_after=3,headless=False)     
-                    user = api.user(UserInfo.source)
-                    #print(user)
-                    user_data = await user.info() 
-                    #print(user_data)              
-                            
-                    user_videos = []          
 
-                    r_data = json.dumps(user_data,indent=4)
-                    UserInfo.o_data = json.loads(r_data) 
+    async def user_profile_data(all_users):
+        async with TikTokApi() as api:
+            sources = ["".join(user) for user in all_users]
+            for source in sources:
+                UserInfo.source = source
+                print(source)
+                # test_user = 'rfaburmese'
+                await api.create_sessions(
+                    ms_tokens=[ms_token],
+                    num_sessions=1,
+                    sleep_after=5,
+                    headless=False,
+                )
+                # source_name = input("Enter source name : ")
+                # sources = [source_name]
+                user = api.user(UserInfo.source)
+                # print(user)
 
-                    vcounts = UserInfo.o_data["userInfo"]["stats"]["videoCount"]  
-                    print(vcounts)
+                user_data = await user.info()
+                # print(user_data)
+                followerCount = user_data["userInfo"]["stats"].get("followerCount")
+                followingCount = user_data["userInfo"]["stats"].get("followingCount")
+                friendCount = user_data["userInfo"]["stats"].get("friendCount")
+                heartCount = user_data["userInfo"]["stats"].get("heartCount")
+                post_count = user_data["userInfo"]["stats"].get("videoCount")
+                print(f"User {UserInfo.source} has follower count {followerCount},following count {followingCount}, friend count {friendCount}, heart count {heartCount} ,post count {post_count}.")
 
-                    ####users videos collect#######
-                    async for video in user.videos(count = 50):  
-                    #print(video.as_dict)              
-                        user_videos.append(video.as_dict)                    
-                    #### collect users data convert json format #######
-                    v_data = json.dumps(user_videos,indent=4) 
-                    UserInfo.vo_data = json.loads(v_data)
+                user_videos = []
 
-                    await insert_video()          
+                r_data = json.dumps(user_data, indent=4)
+                UserInfo.o_data = json.loads(r_data)
 
-async def insert_video():                
+                vcounts = UserInfo.o_data["userInfo"]["stats"].get("videoCount")
+                # print(vcounts)
+
+                ####users videos collect#######
+                async for video in user.videos(count=30):
+                    # print(video.as_dict)
+                    user_videos.append(video.as_dict)
+                #### collect users data convert json format #######
+                v_data = json.dumps(user_videos, indent=4)
+                UserInfo.vo_data = json.loads(v_data)
+
+                await insert_video()
+
+
+async def insert_video():
     with app.app.app_context():
-        app.db.create_all()   
-        
+        app.db.create_all()
+
         for select_data in UserInfo.vo_data:
-                                video_id = select_data["id"]
-                                source_id = UserInfo.o_data["userInfo"]["user"]["id"]
-                                video_createtime = select_data["createTime"]
-                                video_description = str(select_data["desc"])
-                                video_url = 'https://www.tiktok.com/@{}/video/{}'.format(UserInfo.source,select_data["id"])
-                                video_author =  select_data["music"]["authorName"]
-                                video_duration = select_data["music"]["duration"]
-                                video_music_title = select_data["music"]["title"]
-                                video_collectcount = select_data["stats"]["collectCount"]
-                                video_commentcount = select_data["stats"]["commentCount"]
-                                video_diggcount = select_data["stats"]["diggCount"]
-                                video_playcount = select_data["stats"]["playCount"]
-                                video_sharecount = select_data["stats"]["shareCount"]
-                                #print(video_id)
+            ###data collects from user link
+            video_id = select_data["id"]
+            source_id = UserInfo.o_data["userInfo"]["user"]["id"]
+            video_createtime = select_data["createTime"]
+            video_description = str(select_data["desc"])
+            video_url = "https://www.tiktok.com/@{}/video/{}".format(
+                UserInfo.source, select_data["id"]
+            )
+            video_author = select_data["music"]["authorName"]
+            video_duration = select_data["music"]["duration"]
+            video_music_title = select_data["music"]["title"]
+            video_collectcount = select_data["stats"]["collectCount"]
+            video_commentcount = select_data["stats"]["commentCount"]
+            video_diggcount = select_data["stats"]["diggCount"]
+            video_playcount = select_data["stats"]["playCount"]
+            video_sharecount = select_data["stats"]["shareCount"]
+            # print(video_id)
 
-                                users_videos = app.TikTokVideosInfo(
-                                    video_id=video_id, 
-                                    source_id = source_id,
-                                    video_createtime = datetime.utcfromtimestamp(video_createtime),
-                                    video_description = video_description,
-                                    video_url = video_url,                          
-                                    video_author = video_author,
-                                    video_duration = video_duration,
-                                    video_music_title = video_music_title,
-                                    video_collectcount = video_collectcount,
-                                    video_commentcount = video_commentcount,
-                                    video_diggcount = video_diggcount,
-                                    video_playcount = video_playcount,
-                                    video_sharecount = video_sharecount)
-                                
-                                #result_video = app.db.session.query(app.TikTokVideosInfo).filter(app.TikTokVideosInfo.video_id == video_id).first()
-                                #print(result_video)
+            ###create json object for insert database
+            users_videos = app.TikTokVideosInfo(
+                video_id=video_id,
+                source_id=source_id,
+                video_createtime=datetime.utcfromtimestamp(video_createtime),
+                video_description=video_description,
+                video_url=video_url,
+                video_author=video_author,
+                video_duration=video_duration,
+                video_music_title=video_music_title,
+                video_collectcount=video_collectcount,
+                video_commentcount=video_commentcount,
+                video_diggcount=video_diggcount,
+                video_playcount=video_playcount,
+                video_sharecount=video_sharecount,
+            )
 
-                                result_video = app.db.session.query(app.TikTokVideosInfo).filter(app.TikTokVideosInfo.video_id == video_id).first()
-                                #print(result_video)
+            # result_video = app.db.session.query(app.TikTokVideosInfo).filter(app.TikTokVideosInfo.video_id == video_id).first()
+            # print(result_video)
 
-                                if result_video is None:
-                                    try:
-                                        app.db.session.add(users_videos)
-                                        await asyncio.sleep(3)
-                                        app.db.session.commit()
-                                        print("video data source is added successful, video id : {}".format(video_id))
+            result_video = (
+                app.db.session.query(app.TikTokVideosInfo)
+                .filter(app.TikTokVideosInfo.video_id == video_id)
+                .first()
+            )
+            # print(result_video)
 
-                                        #content_id collect from table tiktokvideo info
-                                        content = app.db.session.query(app.TikTokVideosInfo.id).filter(app.TikTokVideosInfo.video_id == video_id).all()
+            if result_video is None:
+                try:
+                    app.db.session.add(users_videos)
+                    await asyncio.sleep(3)
+                    app.db.session.commit()
+                    print(
+                        "video data source is added successful, video id : {},comment : {}, collect : {}, play : {}, share : {}".format(
+                            video_id,video_commentcount,video_collectcount,video_playcount,video_sharecount
+                        )
+                    )
 
-                                        # Extracting the id values from the result
-                                        ids = [row.id for row in content]                       
+                    # content_id collect from table tiktokvideo info
+                    content = (
+                        app.db.session.query(app.TikTokVideosInfo.id)
+                        .filter(app.TikTokVideosInfo.video_id == video_id)
+                        .all()
+                    )
 
-                                        # Reflect the  table from the database
-                                        content_table = Table('all_content', metadata, autoload_with=engine)
+                    # Extracting the id values from the result
+                    ids = [row.id for row in content]
 
-                                        # Access the columns of the "content" table
-                                        columns = content_table.columns.keys()
+                    # Reflect the  table from the database
+                    content_table = Table("all_content", metadata, autoload_with=engine)
 
-                                        # Print the column names
-                                        content_column = columns[1]
-                                        network_column = columns[2]
-                                        # print("content_column {},network_column {}".format(ids,5))
+                    # Access the columns of the "content" table
+                    columns = content_table.columns.keys()
 
-                                        # Define the values to insert
-                                        values_to_insert = [
-                                            {content_column: content_id, network_column: 5} for content_id in ids
-                                        ]
+                    # Print the column names
+                    content_column = columns[1]
+                    network_column = columns[2]
+                    # print("content_column {},network_column {}".format(ids,5))
 
-                                        # Create an insert statement
-                                        insert_allcontent = content_table.insert().values(values_to_insert)
+                    # Define the values to insert
+                    values_to_insert = [
+                        {content_column: content_id, network_column: 5}
+                        for content_id in ids
+                    ]
 
-                                        # Execute the insert statement
-                                        app.db.session.execute(insert_allcontent)
-                                        print("Added content id values : {} for network id 5".format(ids))
+                    # Create an insert statement
+                    insert_allcontent = content_table.insert().values(values_to_insert)
 
-                                    except Exception as e:
-                                        print(f"Error updating data: {e}")
-                                        app.db.session.rollback()
+                    # Execute the insert statement
+                    app.db.session.execute(insert_allcontent)
+                    print("Added content id values : {} for network id 5".format(ids))
 
-                                else:
-                                    update_user_videos = update(app.TikTokVideosInfo).where(app.TikTokVideosInfo.video_id  == video_id).values(
-                                        source_id = source_id,
-                                        video_createtime = datetime.utcfromtimestamp(video_createtime),
-                                        video_description = video_description,
-                                        video_url = video_url,                          
-                                        video_author = video_author,
-                                        video_duration = video_duration,
-                                        video_music_title = video_music_title,
-                                        video_collectcount = video_collectcount,
-                                        video_commentcount = video_commentcount,
-                                        video_diggcount = video_diggcount,
-                                        video_playcount = video_playcount,
-                                        video_sharecount = video_sharecount)
-                                    
-                                    try:
-                                        app.db.session.execute(update_user_videos)
-                                        await asyncio.sleep(3)
-                                        app.db.session.commit()   
-                                        print("video data source is updated successful, video id : {}".format(video_id))
-                                    except Exception as e:
-                                        print(f"Error updating data: {e}")
-                                        app.db.session.rollback()  
+                except Exception as e:
+                    print(f"Error updating data: {e}")
+                    app.db.session.rollback()
+
+            else:
+                update_user_videos = (
+                    update(app.TikTokVideosInfo)
+                    .where(app.TikTokVideosInfo.video_id == video_id)
+                    .values(
+                        source_id=source_id,
+                        video_createtime=datetime.utcfromtimestamp(video_createtime),
+                        video_description=video_description,
+                        video_url=video_url,
+                        video_author=video_author,
+                        video_duration=video_duration,
+                        video_music_title=video_music_title,
+                        video_collectcount=video_collectcount,
+                        video_commentcount=video_commentcount,
+                        video_diggcount=video_diggcount,
+                        video_playcount=video_playcount,
+                        video_sharecount=video_sharecount,
+                    )
+                )
+
+                try:
+                    app.db.session.execute(update_user_videos)
+                    await asyncio.sleep(3)
+                    app.db.session.commit()
+                    print(
+                        "video data source is updated successful, video id : {}".format(
+                            video_id
+                        )
+                    )
+                except Exception as e:
+                    print(f"Error updating data: {e}")
+                    app.db.session.rollback()
+
 
 if __name__ == "__main__":
-        # asyncio.run(UserInfo.user_profile_data(all_users="elevenmedia"))
-        metadata = MetaData()
-        users = Table('tbl_tk_sources', metadata, autoload_with=engine)
-        Session = sessionmaker(bind=engine)
-        session = Session()
-                        
-        all_users = session.query(users).with_entities(app.TikTokSources.source_name).all()
-        rand_source = random.sample(all_users,7)
-        sources = [''.join(user) for user in rand_source] 
-        print(sources)
-         
-        #source_name = input("Enter source name : ")
-        #sources = [source_name] #yangonmediagroup #1108 #elevenmedia sayargyi7635 xinhuamyanmar hkwanntout mtnewstoday npnews3 cnimyanmar09 shwemm143 97media_myanmar dvb.burmese people.media1
-        
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete((UserInfo.user_profile_data(sources)))
+    # asyncio.run(UserInfo.user_profile_data(all_users="elevenmedia"))
+    metadata = MetaData()
+    users = Table("tbl_tk_sources", metadata, autoload_with=engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
 
-        loop.close() 
+    all_users = session.query(users).with_entities(app.TikTokSources.source_name).all()
+    rand_source = random.sample(all_users, 7)
+    sources = ["".join(user) for user in rand_source]
+    print(sources)
+
+    # source_name = input("Enter source name : ")
+    # sources = [source_name] #yangonmediagroup #1108 #elevenmedia sayargyi7635 xinhuamyanmar hkwanntout mtnewstoday npnews3 cnimyanmar09 shwemm143 97media_myanmar dvb.burmese people.media1
+
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete((UserInfo.user_profile_data(sources)))
+
+    loop.close()

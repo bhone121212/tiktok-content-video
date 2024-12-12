@@ -3,7 +3,13 @@
 FROM apify/actor-python-playwright:3.9
 #FROM mcr.microsoft.com/playwright/python:v1.42.0-jammy
 
-#python:3.9-alpine mcr.microsoft.com/playwright:focal
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# Copy the current directory contents into the container at /app
+COPY . .
+
+# python:3.9-alpine mcr.microsoft.com/playwright:focal
 # Install necessary dependencies for Chrome
 RUN apt-get update && apt-get install -y python3-pip \
     wget \
@@ -38,22 +44,29 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
     && apt-get update && apt-get install -y google-chrome-stable \
     && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory in the container
-WORKDIR /usr/src/app
+# Create and activate a virtual environment
+RUN python3 -m venv venv
 
-# Copy the current directory contents into the container at /app
-COPY . .
+# Install pip inside the virtual environment and update it
+RUN ./venv/bin/pip install --upgrade pip
+
+# Install Python dependencies in the virtual environment
+RUN ./venv/bin/pip3 install -r requirements.txt
 
 #RUN python -m playwright install
 # Install any needed dependencies specified in requirements.txt
-RUN pip3 install -r requirements.txt
+#RUN pip3 install -r requirements.txt
 
-#RUN pip3 install TikTokApi
+# Install Playwright inside the virtual environment
+RUN ./venv/bin/pip install playwright && ./venv/bin/playwright install
 
-#RUN python -m playwright install
+# Make the virtual environment the default Python environment
+ENV PATH="/usr/src/app/venv/bin:$PATH"
+
+# RUN playwright install
 # Run source.py script
-#RUN python3 app.py
-#COPY app.py /app
+# RUN python3 app.py
+# COPY app.py /app
 
 # Command to run your application
 CMD ["python3", "video.py"]
