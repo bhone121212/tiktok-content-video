@@ -76,7 +76,7 @@ class UserInfo:
                 # print(vcounts)
 
                 ####users videos collect#######
-                async for video in user.videos(count=30):
+                async for video in user.videos(count=50):
                 #### for specific user   
                 # async for video in user.videos(count=post_count):
                     # print(video.as_dict)
@@ -105,9 +105,24 @@ async def insert_video():
             # video_url = "https://www.tiktok.com/@{}/video/{}".format(
             #     UserInfo.source_name, select_data["id"]
             # )
-            video_author = select_data["music"]["authorName"]
-            video_duration = select_data["music"]["duration"]
-            video_music_title = select_data["music"]["title"]
+
+            if "authorName" not in select_data["music"]:
+                video_author = "orginal"               
+            else:
+                video_author = select_data["music"]["authorName"]                 
+            
+            if "duration" not in select_data["music"]:#["duration"] != "original":
+                video_duration = 0                
+            else:
+                video_duration = select_data["music"]["duration"]                
+
+            if "title" not in select_data["music"]: #["title"] != "original":
+                video_music_title = "original"                
+            else:
+                video_music_title = select_data["music"]["title"]
+            # video_author = select_data["music"]["authorName"]
+            # video_duration = select_data["music"]["duration"]
+            # video_music_title = select_data["music"]["title"]
             video_collectcount = select_data["stats"]["collectCount"]
             video_commentcount = select_data["stats"]["commentCount"]
             video_diggcount = select_data["stats"]["diggCount"]
