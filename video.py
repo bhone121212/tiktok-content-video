@@ -120,7 +120,7 @@ async def insert_video():
                 video_music_title = "original"                
             else:
                 video_music_title = select_data["music"]["title"]
-            # video_author = select_data["music"]["authorName"]
+            ## video_author = select_data["music"]["authorName"]
             # video_duration = select_data["music"]["duration"]
             # video_music_title = select_data["music"]["title"]
             video_collectcount = select_data["stats"]["collectCount"]
