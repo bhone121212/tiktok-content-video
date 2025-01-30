@@ -1,6 +1,7 @@
 # Use an official Python runtime as a parent image
 #FROM python:3.9-slim
-FROM apify/actor-python-playwright:3.9
+#FROM apify/actor-python-playwright:3.9
+FROM docker.io/apify/actor-python-playwright:3.9
 #FROM mcr.microsoft.com/playwright/python:v1.42.0-jammy
 
 # Set the working directory in the container
